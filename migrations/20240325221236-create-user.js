@@ -1,13 +1,9 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable("users", {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
+    await queryInterface.createTable('users', {
+      id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -30,8 +26,8 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "Opps!. This is a required field." },
-          notEmpty: { msg: "Opps!. This is a required field." },
+          notNull: { msg: 'Opps!. This is a required field.' },
+          notEmpty: { msg: 'Opps!. This is a required field.' },
           min: 5,
         },
       },
@@ -61,6 +57,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable('users');
   },
 };

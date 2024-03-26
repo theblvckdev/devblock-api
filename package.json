@@ -1,7 +1,7 @@
 {
-  "name": "devblock-api",
+  "name": "lumo-api",
   "version": "1.0.0",
-  "description": "devblock nodejs api",
+  "description": "lumo nodejs api",
   "main": "sever.js",
   "scripts": {
     "dev": "nodemon server"

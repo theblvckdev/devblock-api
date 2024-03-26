@@ -3,7 +3,7 @@ const path = require('path');
 const hbs = require('nodemailer-express-handlebars');
 
 const sendEmailVerificationMail = (options) => {
-  const { email, subject, verificationURL } = options;
+  const { email, subject, verificationURL, username } = options;
 
   const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
@@ -34,7 +34,7 @@ const sendEmailVerificationMail = (options) => {
     to: email,
     subject,
     template: 'emailVerification',
-    context: { layout: source, email, verificationURL },
+    context: { layout: source, email, verificationURL, username },
   };
 
   transporter.sendMail(mailOptions, (err, info) => {

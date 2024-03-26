@@ -54,6 +54,7 @@ const createUser = async (req, res) => {
     const verificationURL = `${req.protocol}://localhost:3000/api/auth/verify-email/${emailToken}`;
 
     sendEmailVerificationMail({
+      username,
       email: user.email,
       subject: `[Action Required]: Verify Your Lumo Email`,
       verificationURL,

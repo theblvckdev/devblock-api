@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 
+const globalErrorHandler = require('./middleware/errorHandler');
+
 const app = express();
 
 // Middleware that set HTTP headers
@@ -37,5 +39,7 @@ app.all('*', (req, res, next) => {
 
   next();
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;

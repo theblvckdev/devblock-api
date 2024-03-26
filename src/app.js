@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 
+const authRouter = require('./routes/authRoutes');
+
 const globalErrorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -29,6 +31,8 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+app.use('/api/user/', authRouter);
 
 // Handling unhandled endpoints
 app.all('*', (req, res, next) => {

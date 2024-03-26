@@ -2,18 +2,14 @@ const bcrypt = require('bcryptjs');
 const { randomBytes, createHash } = require('crypto');
 const { User } = require('../../../models');
 const sendEmailVerificationMail = require('../../mail/emailVerificationMail');
-const jwtToken = require('../../utils/signJWT');
 
 const createUser = async (req, res) => {
-  const { name, username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-  if (!name || !username || !email || !password)
+  if (!username || !email || !password)
     return res
       .status(499)
       .json({ status: 'error', message: 'All fields are required' });
-
-  // hash client password
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   // hash email token before sending verification token to mail
   const emailToken = randomBytes(7).toString('base64').replaceAll('/', 'B');
@@ -27,12 +23,26 @@ const createUser = async (req, res) => {
     if (existingUser)
       return res.status(403).json({
         status: 'error',
-        message: `This email ${email} is already in user, please try again`,
+        message: `This email address ${email} is already in use, please use another email address`,
       });
+
+    // check if client password pass required password combination
+    let passwordRegex =
+      /^(?=.*[!@#$%^&*()\-_=+{};:,<.>?[\]'"\\|\/])(?=.*[a-zA-Z0-9]).{8,}$/;
+
+    if (!passwordRegex.test(password))
+      return res.status(401).json({
+        status: 'error',
+        message:
+          'Password must be at least 8 characters long, and have a symbol',
+      });
+
+    // hash client password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // create user data in db
     const user = await User.create({
-      name,
+      name: username,
       username,
       email,
       password: hashedPassword,
@@ -41,7 +51,7 @@ const createUser = async (req, res) => {
     });
 
     // send verification email with nodemailer
-    const verificationURL = `${req.protocol}://localhost:3000/api/user/verify-email/${emailToken}`;
+    const verificationURL = `${req.protocol}://localhost:3000/api/auth/verify-email/${emailToken}`;
 
     sendEmailVerificationMail({
       email: user.email,
@@ -49,12 +59,9 @@ const createUser = async (req, res) => {
       verificationURL,
     });
 
-    const signJwt = jwtToken(user.id);
-
     res.status(201).json({
       status: 'success',
       message: `User account created, check ${user.email} for verification mail`,
-      jwtToken: signJwt,
     });
   } catch (err) {
     return res.status(err.status || 500).json({ status: 'error', error: err });

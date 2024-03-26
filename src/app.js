@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.use('/api/user/', authRouter);
+app.use('/api/auth/', authRouter);
 
 // Handling unhandled endpoints
 app.all('*', (req, res, next) => {
